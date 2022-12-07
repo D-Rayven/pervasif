@@ -1,26 +1,38 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png">
-  <HelloWorld msg="Welcome to Your Vue.js App"/>
+  <div id="app">
+    <div class="cell cell-map">
+      <map-component />
+    </div>
+  </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
-
-export default {
-  name: 'App',
-  components: {
-    HelloWorld
+  import MapComponent from './components/MapComponent.vue';
+  export default {
+  components: { MapComponent },
+    name: 'App'
   }
-}
 </script>
 
 <style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
+  html, body {
+    height: 100%;
+    margin: 0;
+  }
+
+  #app {
+    font-family: Avenir, Helvetica, Arial, sans-serif;
+    height: 100%; 
+    display: grid;
+    grid-template-columns: 100vh;
+    grid-auto-rows: 1fr;
+    grid-gap: 1rem;
+    padding: 1rem;
+    box-sizing: border-box;
+  }
+
+  .cell {
+    border-radius: 4px;
+    background-color: lightgrey;
+  }
 </style>
