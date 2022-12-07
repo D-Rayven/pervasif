@@ -10,6 +10,19 @@
   import TileLayer from 'ol/layer/Tile'
   import OSM from 'ol/source/OSM'
 
+  const url = "http://localhost:8081/geoserver/pervasif/wfs?service=WFS&version=1.1.0.0&request=GetFeature&typename=pervasif:pervasif_ressources&outputFormat=application/json";
+  
+  fetch(url)
+    .then(response => response.json())
+    .then(data => {
+      // Traiter les données ici
+      console.log(data);
+    })
+    .catch(error => {
+      // Gérer les erreurs ici
+      console.error(error);
+    });
+
   // importing the OpenLayers stylesheet is required for having
   // good looking buttons!
   import 'ol/ol.css'
