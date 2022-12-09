@@ -10,26 +10,27 @@
   import TileLayer from 'ol/layer/Tile'
   import OSM from 'ol/source/OSM'
 
-  const url = "http://localhost:8081/geoserver/pervasif/wfs?service=WFS&version=1.1.0.0&request=GetFeature&typename=pervasif:pervasif_ressources&outputFormat=application/json";
-  
-  fetch(url)
-    .then(response => response.json())
-    .then(data => {
-      // Traiter les données ici
-      console.log(data);
-    })
-    .catch(error => {
-      // Gérer les erreurs ici
-      console.error(error);
-    });
-
-  // importing the OpenLayers stylesheet is required for having
-  // good looking buttons!
   import 'ol/ol.css'
   import VectorLayer from 'ol/layer/Vector'
   import VectorSource from 'ol/source/Vector'
+
   import GeoJSON from 'ol/format/GeoJSON'
-  // this is a simple triangle over the atlantic ocean
+
+  const url = "http://localhost:8081/geoserver/wfs?service=wfs&version=2.0.0&request=GetFeature&typeNames=pervasif:ressources&outputFormat=application/json";
+  
+  var points = []
+  fetch(url)
+    .then(response => response.json())
+    .then(data => {
+      data['features'].forEach(element => {
+        points.push(element['geometry']['coordinates'])
+      });
+      console.log(points)
+    })
+    .catch(error => {
+      console.error("Erreur : " + error);
+    });
+
   const data = {
     type: 'Feature',
     properties: {},
@@ -38,20 +39,18 @@
       coordinates: [
         [
           [
-            46.32206501599309, -0.4587208979120951
+          -51070.086687, 5832385.915365
           ],
           [
-            -28.125,
-            23.563987128451217
+          -50901.089195, 5832266.482508
           ],
           [
-            -10.8984375,
-            32.84267363195431
+          -51037.242652, 5832113.011288
           ],
           [
-            46.32206501599309, -0.4587208979120951
-          ]
-        ]
+          -51070.086687, 5832385.915365
+          ]         
+        ] 
       ]
     }
   };
@@ -61,32 +60,24 @@
     components: {},
     props: {},
     mounted() {
-      // a feature (geospatial object) is created from the GeoJSON
       const feature = new GeoJSON().readFeature(data, {
-        // this is required since GeoJSON uses latitude/longitude,
-        // but the map is rendered using “Web Mercator”
         featureProjection: 'EPSG:3857'
       });
 
-      // a new vector layer is created with the feature
       const vectorLayer = new VectorLayer({
         source: new VectorSource({
           features: [feature],
         }),
       })
-      // this is where we create the OpenLayers map
       new Map({
-        // the map will be created using the 'map-root' ref
         target: this.$refs['map-root'],
         layers: [
-          // adding a background tiled layer
           new TileLayer({
-            source: new OSM() // tiles are served by OpenStreetMap
+            source: new OSM()
           }),
           vectorLayer
         ],
 
-        // the map view will initially show the whole world
         view: new View({
           zoom: 18,
           center: [-51055.754745, 5832239.012951],
