@@ -19,53 +19,25 @@
   import {Point} from "ol/geom";
   // this is a simple triangle over the atlantic ocean
 
-
-
-  const place = [-51055.754745, 5832250.012951];
-  const point = new Point(place);
-
-
-
-  import GeoJSON from 'ol/format/GeoJSON'
-
   const url = "http://localhost:8081/geoserver/wfs?service=wfs&version=2.0.0&request=GetFeature&typeNames=pervasif:ressources&outputFormat=application/json";
 
-  var points = []
+  // const place = [-51055.754745, 5832250.012951];
+  // const point = new Point(place);
+
+  var places = []
+
   fetch(url)
     .then(response => response.json())
     .then(data => {
       data['features'].forEach(element => {
-        points.push(element['geometry']['coordinates'])
+        places.push(new Point(element['geometry']['coordinates']))
       });
-      console.log(points)
     })
     .catch(error => {
       console.error("Erreur : " + error);
     });
 
-  const data = {
-    type: 'Feature',
-    properties: {},
-    geometry: {
-      type: 'Polygon',
-      coordinates: [
-        [
-          [
-          -51070.086687, 5832385.915365
-          ],
-          [
-          -50901.089195, 5832266.482508
-          ],
-          [
-          -51037.242652, 5832113.011288
-          ],
-          [
-          -51070.086687, 5832385.915365
-          ]
-        ]
-      ]
-    }
-  };
+
 
   export default {
     name: 'MapContainer',
@@ -73,10 +45,14 @@
     props: {},
     mounted() {
 
-      // a new vector layer is created with the feature
+      const vectorSource = new VectorSource();
+
+      const features = places.map(place => new Feature(new Point(place)));
+      vectorSource.addFeatures(features);
 
 
-      // this is where we create the OpenLayers map
+
+
       new Map({
         // the map will be created using the 'map-root' ref
         target: this.$refs['map-root'],
@@ -86,15 +62,11 @@
             source: new OSM() // tiles are served by OpenStreetMap
           }),
           new VectorLayer({
-            source: new VectorSource({
-              features: [new Feature(
-                  point
-              )],
-              style: {
-                'circle-radius': 150,
-                'circle-fill-color': 'black',
-              },
-            }),
+            source: vectorSource,
+            style: {
+              'circle-radius': 150,
+              'circle-fill-color': 'black',
+            }
           })
         ],
 

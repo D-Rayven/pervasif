@@ -15,12 +15,15 @@ import OSM from 'ol/source/OSM'
 import 'ol/ol.css'
 import VectorLayer from 'ol/layer/Vector'
 import VectorSource from 'ol/source/Vector'
-import ol from "ol";
+import Feature from 'ol/Feature';
 import {Point} from "ol/geom";
 // this is a simple triangle over the atlantic ocean
 
-const place = [-51055.754745, 5832239.012951];
+
+
+const place = [-51055.754745, 5832250.012951];
 const point = new Point(place);
+
 
 
 export default {
@@ -30,13 +33,8 @@ export default {
   mounted() {
 
     // a new vector layer is created with the feature
-    const vectorLayer = new VectorLayer({
-      source: new VectorSource({
-        features: [new ol.Feature(
-            point
-        )],
-      }),
-    })
+
+
     // this is where we create the OpenLayers map
     new Map({
       // the map will be created using the 'map-root' ref
@@ -46,7 +44,17 @@ export default {
         new TileLayer({
           source: new OSM() // tiles are served by OpenStreetMap
         }),
-        vectorLayer
+        new VectorLayer({
+          source: new VectorSource({
+            features: [new Feature(
+                point
+            )],
+            style: {
+              'circle-radius': 150,
+              'circle-fill-color': 'black',
+            },
+          }),
+        })
       ],
 
       // the map view will initially show the whole world
